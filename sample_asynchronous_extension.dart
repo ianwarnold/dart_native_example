@@ -9,10 +9,10 @@ class RandomArray {
   static SendPort _port;
 
   void randomArray(int seed, int length, void callback(List result)) {
-    ReceivePort receive_port = ReceivePort();
+    ReceivePort receivePort = ReceivePort();
 
     var args = new List(3);
-    args[0] = receive_port.sendPort;
+    args[0] = receivePort.sendPort;
     args[1] = seed;
     args[2] = length;
 
@@ -23,13 +23,13 @@ class RandomArray {
     // item to the callback. I can't figure out how to close the port from the
     // C++ side, so for now I'm using .first(...) and closing the port inside
     // the callback.
-    receive_port.first.then((result) {
+    receivePort.first.then((result) {
       if (result != null) {
         callback(result);
       } else {
         throw new Exception("Random array creation failed");
       }
-      receive_port.close();
+      receivePort.close();
     });
   }
 
