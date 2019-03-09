@@ -9,6 +9,9 @@ class RandomArray {
   static SendPort _port;
 
   void randomArray(int seed, int length, void callback(List result)) {
+    // To instantiate a new ReceivePort per request is at least no worse than
+    // the original example, since that's what it was doing originally:
+    // https://github.com/dart-lang/sdk/blob/3481c5661a43d6bf2d1766fa8bb4e1dbc79025ff/runtime/lib/isolate.dart#L105-L109
     ReceivePort receivePort = ReceivePort();
 
     var args = new List(3);
