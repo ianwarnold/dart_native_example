@@ -83,14 +83,6 @@ void wrappedRandomArray(Dart_Port dest_port_id,
 
       if (values != NULL) {
         Dart_CObject result;
-        // Whatever array type was in use previously is gone, so I guess my
-        // options are (1) to build a list element by element inside of a
-        // top-level Dart_CObject array, or (2) use this TypedData thing. The
-        // TypedData is closer to the API of the original example, so I wonder
-        // if it is the extant descendant of the former API. It does seem a
-        // little more specific in purpose given how the library documentation
-        // talks about SIMD (https://api.dartlang.org/stable/2.2.0/dart-typed_data/dart-typed_data-library.html).
-        //
         // My intuition suggests to use Dart_CObject_kExternalTypedData here,
         // since we're providing our own malloc(...)'d array, but that causes
         // a segfault. I theorize that because Dart_PostCObject is going to
