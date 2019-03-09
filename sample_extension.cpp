@@ -73,7 +73,7 @@ void wrappedRandomArray(Dart_Port dest_port_id,
         param1->type == Dart_CObject_kInt32 &&
         param2->type == Dart_CObject_kInt32) {
 
-      // Is there a function to get the ID? I feel a little dirty reaching
+      // TODO Is there a function to get the ID? I feel a little dirty reaching
       // into the struct.
       Dart_Port reply_port_id = param0->value.as_send_port.id;
       int seed = param1->value.as_int32;
@@ -83,12 +83,13 @@ void wrappedRandomArray(Dart_Port dest_port_id,
 
       if (values != NULL) {
         Dart_CObject result;
-        // My intuition suggests to use Dart_CObject_kExternalTypedData here,
-        // since we're providing our own malloc(...)'d array, but that causes
-        // a segfault. I theorize that because Dart_PostCObject is going to
-        // copy the whole thing, it will end up owning its own copy, and as
-        // such if it copies the type field bit-for-bit, then kTypedData is
-        // correct, because ultimately the Dart-copied array is *not* external.
+        // TODO My intuition suggests to use Dart_CObject_kExternalTypedData
+        // here since we're providing our own malloc(...)'d array, but that
+        // causes a segfault. I theorize that because Dart_PostCObject is
+        // going to copy the whole thing, it will end up owning its own copy,
+        // and as such if it copies the type field bit-for-bit, then kTypedData
+        // is correct, because ultimately the Dart-copied array is *not*
+        // external.
         result.type = Dart_CObject_kTypedData;
         result.value.as_typed_data.type = Dart_TypedData_kUint8;
         result.value.as_typed_data.length = length;

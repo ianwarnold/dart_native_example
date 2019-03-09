@@ -17,12 +17,12 @@ class RandomArray {
     args[2] = length;
 
     _servicePort.send(args);
-    // I wanted to use receive_port.single(...), since I know I'll only send a
-    // single message to this port, but it looks like .single(...) waits for
-    // port closure to ensure only one item was ever sent before passing that
-    // item to the callback. I can't figure out how to close the port from the
-    // C++ side, so for now I'm using .first(...) and closing the port inside
-    // the callback.
+    // TODO I wanted to use receive_port.single(...), since I know I'll only
+    // send a single message to this port, but it looks like .single(...) waits
+    // for port closure to ensure only one item was ever sent before passing
+    // that item to the callback. I can't figure out how to close the port from
+    // the C++ side, so for now I'm using .first(...) and closing the port
+    // inside the callback.
     receivePort.first.then((result) {
       if (result != null) {
         callback(result);
