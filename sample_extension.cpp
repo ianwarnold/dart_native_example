@@ -120,23 +120,6 @@ void RandomArray_ServicePort(Dart_NativeArguments arguments) {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Dart_NativeFunction ResolveName(Dart_Handle name, int argc, bool *auto_setup_scope) {
 // If we fail, we return NULL, and Dart throws an exception.
     if (!Dart_IsString(name)) return NULL;
