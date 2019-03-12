@@ -20,19 +20,19 @@ class RandomArray {
     args[2] = length;
 
     _servicePort.send(args);
-    // TODO I wanted to use receive_port.single(...), since I know I'll only
-    // send a single message to this port, but it looks like .single(...) waits
-    // for port closure to ensure only one item was ever sent before passing
-    // that item to the callback. I can't figure out how to close the port from
-    // the C++ side, so for now I'm using .first(...) and closing the port
-    // inside the callback.
+
+    // https://github.com/dart-lang/sdk/blob/3481c5661a43d6bf2d1766fa8bb4e1dbc79025ff/runtime/lib/isolate.dart#L74-L79
+    // it seems like receive(...) was listen(...) from before ReceivePort was a stream.
+    // https://github.com/dart-lang/sdk/commit/6a72655d1bba6f1a9cd4f6c55d9e09e890a8c3bb#diff-4e3d60ef4549b538efb7a736de5d7aabR134
+    // https://github.com/dart-lang/sdk/commit/6a72655d1bba6f1a9cd4f6c55d9e09e890a8c3bb#diff-4e3d60ef4549b538efb7a736de5d7aabL150
+    // https://github.com/dart-lang/sdk/commit/6a72655d1bba6f1a9cd4f6c55d9e09e890a8c3bb#diff-4e3d60ef4549b538efb7a736de5d7aabR162
     receivePort.first.then((result) {
+      receivePort.close();
       if (result != null) {
         callback(result);
       } else {
         throw new Exception("Random array creation failed");
       }
-      receivePort.close();
     });
   }
 
