@@ -99,7 +99,7 @@ void wrappedRandomArray(Dart_Port dest_port_id,
         }
     }
     // TODO we don't have access to a reply port out in this scope where even
-    // the reply port parameter proved invalid... I guess we just won't reply...
+    // the 0th parameter proved invalid... I guess we just won't reply...
 }
 
 void RandomArray_ServicePort(Dart_NativeArguments arguments) {
