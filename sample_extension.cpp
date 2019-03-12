@@ -48,10 +48,10 @@ void SystemSrand(Dart_NativeArguments arguments) {
     Dart_SetReturnValue(arguments, HandleError(Dart_NewBoolean(success)));
 }
 
-uint8_t* random_array(int seed, int length) {
+uint8_t *random_array(int seed, int length) {
     if (length <= 0 || length > 10000000) return NULL;
 
-    uint8_t* values = reinterpret_cast<uint8_t*>(malloc(length));
+    uint8_t *values = reinterpret_cast<uint8_t *>(malloc(length));
     if (NULL == values) return NULL;
 
     srand(seed);
@@ -62,58 +62,54 @@ uint8_t* random_array(int seed, int length) {
 }
 
 void wrappedRandomArray(Dart_Port dest_port_id,
-                        Dart_CObject* message) {
-  if (message->type == Dart_CObject_kArray &&
-      3 == message->value.as_array.length) {
-      // Use .as_array and .as_int32 to access the data in the Dart_CObject.
-      Dart_CObject *param0 = message->value.as_array.values[0];
-      Dart_CObject *param1 = message->value.as_array.values[1];
-      Dart_CObject *param2 = message->value.as_array.values[2];
-      if (param0->type == Dart_CObject_kSendPort)
-      {
-          // TODO Is there a function to get the ID? I feel a little dirty reaching
-          // into the struct.
-          Dart_Port reply_port_id = param0->value.as_send_port.id;
+                        Dart_CObject *message) {
+    if (message->type == Dart_CObject_kArray &&
+        3 == message->value.as_array.length) {
+        // Use .as_array and .as_int32 to access the data in the Dart_CObject.
+        Dart_CObject *param0 = message->value.as_array.values[0];
+        Dart_CObject *param1 = message->value.as_array.values[1];
+        Dart_CObject *param2 = message->value.as_array.values[2];
+        if (param0->type == Dart_CObject_kSendPort) {
+            Dart_Port reply_port_id = param0->value.as_send_port.id;
 
-          if (param1->type == Dart_CObject_kInt32 &&
-              param2->type == Dart_CObject_kInt32)
-          {
-              int seed = param1->value.as_int32;
-              int length = param2->value.as_int32;
+            if (param1->type == Dart_CObject_kInt32 &&
+                param2->type == Dart_CObject_kInt32) {
+                int seed = param1->value.as_int32;
+                int length = param2->value.as_int32;
 
-              uint8_t *values = random_array(seed, length);
+                uint8_t *values = random_array(seed, length);
 
-              if (values != NULL) {
-                  Dart_CObject result;
-                  result.type = Dart_CObject_kTypedData;
-                  result.value.as_typed_data.type = Dart_TypedData_kUint8;
-                  result.value.as_typed_data.length = length;
-                  result.value.as_typed_data.values = values;
-                  Dart_PostCObject(reply_port_id, &result);
-                  free(values);
-                  // It is OK that result is destroyed when function exits.
-                  // Dart_PostCObject has copied its data.
-                  return;
-              }
-          }
+                if (values != NULL) {
+                    Dart_CObject result;
+                    result.type = Dart_CObject_kTypedData;
+                    result.value.as_typed_data.type = Dart_TypedData_kUint8;
+                    result.value.as_typed_data.length = length;
+                    result.value.as_typed_data.values = values;
+                    Dart_PostCObject(reply_port_id, &result);
+                    free(values);
+                    // It is OK that result is destroyed when function exits.
+                    // Dart_PostCObject has copied its data.
+                    return;
+                }
+            }
 
-          Dart_CObject result;
-          result.type = Dart_CObject_kNull;
-          Dart_PostCObject(reply_port_id, &result);
-      }
-  }
-  // TODO we don't have access to a reply port out in this scope where even
-  // the reply port parameter proved invalid... I guess we just won't reply...
+            Dart_CObject result;
+            result.type = Dart_CObject_kNull;
+            Dart_PostCObject(reply_port_id, &result);
+        }
+    }
+    // TODO we don't have access to a reply port out in this scope where even
+    // the reply port parameter proved invalid... I guess we just won't reply...
 }
 
 void RandomArray_ServicePort(Dart_NativeArguments arguments) {
-  Dart_SetReturnValue(arguments, Dart_Null());
-  Dart_Port service_port =
-      Dart_NewNativePort("RandomArrayService", wrappedRandomArray, true);
-  if (service_port != ILLEGAL_PORT) {
-    Dart_Handle send_port = Dart_NewSendPort(service_port);
-    Dart_SetReturnValue(arguments, send_port);
-  }
+    Dart_SetReturnValue(arguments, Dart_Null());
+    Dart_Port service_port =
+            Dart_NewNativePort("RandomArrayService", wrappedRandomArray, true);
+    if (service_port != ILLEGAL_PORT) {
+        Dart_Handle send_port = Dart_NewSendPort(service_port);
+        Dart_SetReturnValue(arguments, send_port);
+    }
 }
 
 Dart_NativeFunction ResolveName(Dart_Handle name, int argc, bool *auto_setup_scope) {
